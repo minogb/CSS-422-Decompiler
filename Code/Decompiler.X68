@@ -8,7 +8,7 @@
 START: 
 ;hand over to our controller
     BRA MAIN
-    SUBQ #5,(A4)
+    LEA MAIN,A6
 *-----------------------INCLUDES---------------------------------------
     INCLUDE 'OP_VARIABLES.X68'
     INCLUDE 'OUTPUT_VARIABLES.X68'
@@ -70,7 +70,7 @@ TESTS_ARRAY DC.L ADDS_OP_CHECK, RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_C
     DC.L MOVE_FM_SR_OP_CHECK, CMPI_OP_CHECK, BCLR_OP_CHECK, MOVEA_OP_CHECK, ORI_OP_CHECK, MOVE_OP_CHECK
 *-------------------------TEMP USE---------------------------------
 EA_TEXT DC.B 'EA',0
-SAMPLE_INPUT DC.W $5B54
+SAMPLE_INPUT DC.W $4DF9
     END    START        ; last line of source
 
 

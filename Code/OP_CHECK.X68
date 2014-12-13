@@ -343,7 +343,32 @@ SUBQ_CHECK_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 JSR_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W (JSR_VALUE),D1
+    CMP.W JSR_VALUE,D1
+    BNE JSR_CHECK_DONE
+    MOVE.W D2,D1
+    AND.W #$0038,D1
+    LSR #3,D1
+    CMP #0,D1
+    BEQ JSR_CHECK_DONE
+    CMP #1,D1
+    BEQ JSR_CHECK_DONE
+    CMP #3,D1
+    BEQ JSR_CHECK_DONE
+    CMP #4,D1
+    BEQ JSR_CHECK_DONE
+    CMP #7,D1
+    BNE GOOD_JSR_CHECK
+    MOVE.W D2,D1
+    AND.W #$0007,D1
+    CMP #3,D1
+    BGT JSR_CHECK_DONE
+    BRA GOOD_JSR_CHECK
+GOOD_JSR_CHECK
+    MOVE #1,D7
+    JSR PRINTING_JSR
+JSR_CHECK_DONE
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 RTS_OP_CHECK:                         
@@ -356,22 +381,118 @@ RTS_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 MOVEM_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W (MOVEM_VALUE),D1
+    CMP.W MOVEM_VALUE,D1
+    BNE DONE_MOVEM_CHECK
+    MOVE.W D2,D1
+    AND.W #$0400,D1
+    LSR #8,D1
+    LSR #2,D1
+    CMP #0,D1
+    BNE MOVEM_MEM_TO_REG
+    BRA MOVEM_REG_TO_MEM
+MOVEM_REG_TO_MEM
+    MOVE.W D2,D1
+    AND.W #$0038,D1
+    LSR #3,D1
+    CMP #0,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #1,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #3,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #7,D1
+    BNE GOOD_MOVEM_REG_TO_MEM_CHECK
+    MOVE.W D2,D1
+    AND.W #0007,D1
+    CMP #1,D1
+    BGT DONE_MOVEM_CHECK
+GOOD_MOVEM_REG_TO_MEM_CHECK    JSR PRINTING_MOVEM_REG_TO_MEM
+    BRA GOOD_MOVEM_CHECK
+MOVEM_MEM_TO_REG
+    MOVE.W D2,D1
+    AND.W #$0038,D1
+    LSR #3,D1
+    CMP #0,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #1,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #3,D1
+    BEQ DONE_MOVEM_CHECK
+    CMP #7,D1
+    BNE GOOD_MOVEM_MEM_TO_REG_CHECK
+    MOVE.W D2,D1
+    AND.W #0007,D1
+    CMP #3,D1
+    BGT DONE_MOVEM_CHECK
+GOOD_MOVEM_MEM_TO_REG_CHECK    JSR PRINTING_MOVEM_MEM_TO_REG
+    BRA GOOD_MOVEM_CHECK
+GOOD_MOVEM_CHECK
+    MOVE #1,D7
+    BRA DONE_MOVEM_CHECK
+DONE_MOVEM_CHECK
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 NEG_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W (NEG_VALUE),D1
+    CMP.W NEG_VALUE,D1
+    BNE DONE_NEG_CHECK
+    MOVE.W D2,D1
+    AND.W #$00C0,D1
+    LSR #6,D1
+    CMP #3,D1
+    BEQ DONE_NEG_CHECK
+    CMP #7,D1
+    BNE GOOD_NEG_CHECK
+    MOVE.W D2,D1
+    AND.W #$0038,D1
+    LSR #3,D1
+    CMP #1,D1
+    BGT DONE_NEG_CHECK
+    BRA GOOD_NEG_CHECK
+GOOD_NEG_CHECK
+    JSR PRINTING_NEG
+    MOVE #1,D7
+    BRA DONE_NEG_CHECK
+DONE_NEG_CHECK
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 LEA_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W (LEA_VALUE),D1
+    CMP.W LEA_VALUE,D1
+    BNE DONE_LEA_CHECK
+    MOVE.W D2,D1
+    AND.W #$0038,D1
+    LSR #3,D1
+    CMP #0,D1
+    BEQ DONE_LEA_CHECK
+    CMP #1,D1
+    BEQ DONE_LEA_CHECK
+    CMP #3,D1
+    BEQ DONE_LEA_CHECK
+    CMP #4,D1
+    BEQ DONE_LEA_CHECK
+    CMP #7,D1
+    BNE GOOD_LEA_CHECK
+    MOVE.W D2,D1
+    AND.W #$0007,D1
+    CMP #4,D1
+    BGT DONE_LEA_CHECK
+GOOD_LEA_CHECK
+    JSR PRINTING_LEA
+    MOVE #1,D7
+    BRA DONE_LEA_CHECK
+DONE_LEA_CHECK
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 MOVE_TO_SR_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 MOVE_TO_CCR_OP_CHECK:                         
@@ -391,7 +512,27 @@ MOVE_FM_SR_OP_CHECK:
     RTS
 CMPI_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W (CMPI_VALUE),D1
+    BNE DONE_CMPI_CHECK
+    MOVE.W D2,D1
+    AND.W #$00C0,D1
+    CMP #3,D1
+    BNE DONE_CMPI_CHECK
+    AND.W #$0380,D1
+    CMP #1,D1
+    BNE DONE_CMPI_CHECK
+    CMP #7,D1
+    BNE GOOD_CMPI
+    MOVE.W D2,D1
+    AND.W #$0007,D1
+    CMP #3,D1
+    BGT DONE_CMPI_CHECK
+    BRA GOOD_CMPI
+GOOD_CMPI
+    MOVE #1,D7
+    JSR PRINTING_CMPI
+DONE_CMPI_CHECK
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 BCLR_OP_CHECK:                         
@@ -427,6 +568,16 @@ ADDS_OP_CHECK
                      
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
+
+
+
+
+
+
+
+
+
+
 
 
 

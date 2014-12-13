@@ -326,6 +326,14 @@ PRINT_EOR:
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+PRINT_LIST:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA LIST_TEXT,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+
 
 
 
