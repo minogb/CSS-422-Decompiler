@@ -10,13 +10,6 @@
 *readability
 DATA_PRINT:
     MOVEM.L D0-D2/A0-A1,-(SP)         ;back up any data we might step on
-    
-    MOVE.L (A2),D1                      ;print out address stored in A2
-    MOVE.B #3,D0
-    TRAP #15
-    
-    JSR PRINT_SPACE                   ;formating YEAS
-    
     LEA DATA_TEXT,A1                  ;printing DATA
     MOVE.B #14,D0
     TRAP #15    
@@ -28,7 +21,7 @@ DATA_PRINT:
     TRAP #15
 
     MOVEM.L (SP)+,D0-D2/A0-A1         ;restore any data    
-    BRA LOOP_INPUT                    ;we need to go to the next part of the input
+    RTS
 PRINT_LONG:                         
     MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
     LEA LONG_TEXT,A1                  ;print out .L
@@ -73,7 +66,7 @@ PRINT_REG:
     RTS                               ;return to sender
 PRINT_VALUE:
     MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
-    LEA COMMA_TEXT,A1                 ;print out #
+    LEA VALUE_TEXT,A1                 ;print out #
     MOVE.B #14,D0                
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
@@ -273,6 +266,8 @@ PRINT_D1:                             ;assumes data is in D1, common for printin
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+
+
 
 *~Font name~Courier New~
 *~Font size~10~
