@@ -45,6 +45,12 @@ LEA_TEXT DC.B 'LEA',0
 *-----------------------------------------------------------------
 NOP_VALUE DC.L $4E71
 NOP_TEXT DC.B 'NOP',0
+*-----------------------------------------------------------------
+LEFT_PAR_TEXT DC.B '(',0
+RIGHT_PAR_TEXT DC.B ')',0
+MINUS_TEXT DC.B '-',0
+PLUS_TEXT DC.B '+',0
+UNSUPPORTED_EA_TEXT DC.B 'Unsuported EA Mode',0
 *------------------------COMMON VARIABLES-------------------------
 DATA_TEXT DC.B 'DATA',0
 ADD_REG_TEXT DC.B 'A',0
@@ -56,6 +62,9 @@ BYTE_TEXT DC.B '.B',0
 LONG_TEXT DC.B '.L',0
 WORD_TEXT DC.B '.W',0
 NUM_OF_OP DC.B $18,0        ;there are 24 (dec) 0x18 number of OPs
+
+
+
 
 
 

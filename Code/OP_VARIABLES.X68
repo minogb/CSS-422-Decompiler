@@ -29,7 +29,6 @@ EOR_OR_CMP_VALUE            DC.W    $B000
 CMPI_VALUE                  DC.W    $0C00
 BCC_OR_BRA_VALUE            DC.W    $6000
 JSR_VALUE                   DC.W    $4E80
-* Put program code here
 
 
 

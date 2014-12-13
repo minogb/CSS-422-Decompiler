@@ -108,11 +108,10 @@ DONE_PRINT_SHIFT    MOVEM.L (SP)+,D0-D7/A0-A6                   ;back up any dat
 PRINT_SHIFT_MEMORY:
     MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on   
     ;determine which type we are
-    LEA EA_TEXT,A1
-    MOVE.B #14,D0
-    TRAP #15
+    JSR DECODE_AS_SOURCE
     MOVEM.L (SP)+,D0-D7/A0-A6                   ;back up any data we might step on   
     RTS
+
 
 
 

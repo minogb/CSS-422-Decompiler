@@ -266,8 +266,65 @@ PRINT_D1:                             ;assumes data is in D1, common for printin
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+PRINT_DER_ADD:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA LEFT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    
+    JSR PRINT_ADD_REG
+    JSR PRINT_D1
+    
+    LEA RIGHT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+PRINT_INC_DER_ADD:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA LEFT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    
+    JSR PRINT_D1
+    
+    LEA RIGHT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
 
+    LEA PLUS_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+PRINT_DEC_DER_ADD:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    
+    LEA MINUS_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    
+    LEA LEFT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
+    
+    JSR PRINT_D1
+    
+    LEA RIGHT_PAR_TEXT,A1
+    MOVE.B #14,D0                
+    TRAP #15
 
+    
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+PRINT_UNSUPPORTED_EA:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA UNSUPPORTED_EA_TEXT,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
 
 *~Font name~Courier New~
 *~Font size~10~
