@@ -29,6 +29,8 @@ EOR_OR_CMP_VALUE            DC.W    $B000
 CMPI_VALUE                  DC.W    $0C00
 BCC_OR_BRA_VALUE            DC.W    $6000
 JSR_VALUE                   DC.W    $4E80
+NOP_VALUE                   DC.W    $4E71
+ADDS_VALUE                  DC.W    $D000
 
 
 

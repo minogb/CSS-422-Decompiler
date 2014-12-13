@@ -8,7 +8,7 @@
 START: 
 ;hand over to our controller
     BRA MAIN
-    ASR (A0)
+    SUBQ #5,(A4)
 *-----------------------INCLUDES---------------------------------------
     INCLUDE 'OP_VARIABLES.X68'
     INCLUDE 'OUTPUT_VARIABLES.X68'
@@ -41,7 +41,7 @@ DONE_INPUT
 VALID_OP_CHECK:                         
     MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on
     LEA TESTS_ARRAY,A3
-    MOVE.B #25,D4                               ;we have 25 inputs to check
+    MOVE.B #26,D4                               ;we have 25 inputs to check
     CLR.L D3                                    ;we are going to count up
 TESTING_LOOP
     ADD #1,D3
@@ -64,14 +64,17 @@ DONE
     MOVEM.L (SP)+,D0-D7/A0-A6                   ;restore any data
     RTS
 *------------------------------------------------------------------
-TESTS_ARRAY DC.L RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_CHECK, EOR_OR_CMP_OP_CHECK, SUB_OP_CHECK
-    DC.L DIVS_OP_CHECK,OR_OP_CHECK,BCC_OR_BRA_OP_CHECK,SUBQ_OP_CHECK, JSR_OP_CHECK,RTS_OP_CHECK,MOVEM_OP_CHECK
-    DC.L NEG_OP_CHECK,LEA_OP_CHECK,MOVE_TO_SR_OP_CHECK, MOVE_TO_CCR_OP_CHECK, MOVE_FM_CCR_OP_CHECK
-    DC.L MOVE_FM_SR_OP_CHECK,CMPI_OP_CHECK,BCLR_OP_CHECK,MOVEA_OP_CHECK,ORI_OP_CHECK,MOVE_OP_CHECK
+TESTS_ARRAY DC.L ADDS_OP_CHECK, RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_CHECK, EOR_OR_CMP_OP_CHECK, SUB_OP_CHECK
+    DC.L DIVS_OP_CHECK, OR_OP_CHECK, BCC_OR_BRA_OP_CHECK, SUBQ_OP_CHECK, JSR_OP_CHECK, RTS_OP_CHECK, NOP_OP_CHECK, MOVEM_OP_CHECK
+    DC.L NEG_OP_CHECK, LEA_OP_CHECK, MOVE_TO_SR_OP_CHECK, MOVE_TO_CCR_OP_CHECK, MOVE_FM_CCR_OP_CHECK
+    DC.L MOVE_FM_SR_OP_CHECK, CMPI_OP_CHECK, BCLR_OP_CHECK, MOVEA_OP_CHECK, ORI_OP_CHECK, MOVE_OP_CHECK
 *-------------------------TEMP USE---------------------------------
 EA_TEXT DC.B 'EA',0
-SAMPLE_INPUT DC.W $E0D0
+SAMPLE_INPUT DC.W $5B54
     END    START        ; last line of source
+
+
+
 
 
 

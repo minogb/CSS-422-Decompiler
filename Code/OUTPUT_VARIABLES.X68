@@ -13,6 +13,7 @@ ADD_TEXT DC.B 'ADD',0
 *-----------------------------------------------------------------
 ORI_TEXT DC.B 'ORI',0
 OR_TEXT DC.B 'OR',0
+EOR_TEXT DC.B 'EOR',0
 *-----------------------------------------------------------------
 CMP_TEXT DC.B 'CMP',0
 CMPI_TEXT DC.B 'CMPI',0
@@ -21,9 +22,21 @@ MULS_TEXT DC.L 'MULS ',0
 DIVS_TEXT DC.L 'DIVS ',0
 *-----------------------------------------------------------------
 BCC_TEXT DC.B 'B',0
-*add other CC values
+CC_TEXT DC.B 'CC',0
+CS_TEXT DC.B 'CS',0
+EQ_TEXT DC.B 'EQ',0
+GE_TEXT DC.B 'GE',0
+GT_TEXT DC.B 'GT',0
+HI_TEXT DC.B 'HI',0
+LE_TEXT DC.B 'LE',0
+LT_TEXT DC.B 'LT',0
+MI_TEXT DC.B 'MI',0
+NE_TEXT DC.B 'NE',0
+PL_TEXT DC.B 'PL',0
+VC_TEXT DC.B 'VC',0
+VS_TEXT DC.B 'VS',0
+RA_TEXT DC.B 'RA',0
 *-----------------------------------------------------------------
-BRA_TEXT DC.B 'BRA ',0
 JSR_TEXT DC.B 'JSR',0
 RTS_TEXT DC.B 'RTS',0
 *-----------------------------------------------------------------
@@ -43,7 +56,6 @@ NEG_TEXT DC.B 'NEG',0
 *-----------------------------------------------------------------
 LEA_TEXT DC.B 'LEA',0
 *-----------------------------------------------------------------
-NOP_VALUE DC.L $4E71
 NOP_TEXT DC.B 'NOP',0
 *-----------------------------------------------------------------
 LEFT_PAR_TEXT DC.B '(',0
@@ -62,6 +74,10 @@ BYTE_TEXT DC.B '.B',0
 LONG_TEXT DC.B '.L',0
 WORD_TEXT DC.B '.W',0
 NUM_OF_OP DC.B $18,0        ;there are 24 (dec) 0x18 number of OPs
+
+
+
+
 
 
 

@@ -175,17 +175,10 @@ PRINT_NEG:
     MOVE.B #14,D0                
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
-    RTS                               ;return to sender
-PRINT_BRA:
-    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
-    LEA   BRA_TEXT,A1                 ;print out BRA
-    MOVE.B #14,D0                
-    TRAP #15
-    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
-    RTS                               ;return to sender
+    RTS                               ;return to sender                             ;return to sender
 PRINT_BCC:
     MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
-    LEA   COMMA_TEXT,A1               ;print out BCC
+    LEA   BCC_TEXT,A1               ;print out BCC
     MOVE.B #14,D0                
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
@@ -325,6 +318,18 @@ PRINT_UNSUPPORTED_EA:
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+
+PRINT_EOR:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA EOR_TEXT,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+
+
+
+
 
 *~Font name~Courier New~
 *~Font size~10~
