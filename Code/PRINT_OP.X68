@@ -107,10 +107,37 @@ DONE_PRINT_SHIFT    MOVEM.L (SP)+,D0-D7/A0-A6                   ;back up any dat
     RTS
 PRINT_SHIFT_MEMORY:
     MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on   
-    ;determine which type we are
+    MOVE.W D2,D1
+    
+    LSL #5,D1
+    LSR #5,D1
+    LSR #8,D1
+    LSR #1,D1
+    
+    CMP #0,D1
+    BEQ PRINTING_AS_MEM
+    CMP #1,D1
+    BEQ PRINTING_AS_MEM
+    MOVE.W D2,D1
+    JSR PRINT_RO
+    JSR GET_SHIFT_DIR
+SHIFT_MEM_EA
+    JSR PRINT_SPACE
     JSR DECODE_AS_SOURCE
-    MOVEM.L (SP)+,D0-D7/A0-A6                   ;back up any data we might step on   
+    MOVEM.L (SP)+,D0-D7/A0-A6 
     RTS
+    
+PRINTING_AS_MEM
+    MOVE.W D2,D1
+    JSR PRINT_AS
+    JSR GET_SHIFT_DIR
+    BRA SHIFT_MEM_EA
+PRINTING_LS_MEM
+    MOVE.W D2,D1
+    JSR  PRINT_LS
+    JSR GET_SHIFT_DIR                           
+    BRA SHIFT_MEM_EA
+
 
 
 
