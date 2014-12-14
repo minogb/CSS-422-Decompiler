@@ -10,7 +10,7 @@ MOVE_TO_SR_VALUE            DC.W    $11B0
 MOVE_FM_SR_VALUE            DC.W    $1030
 MOVE_TO_CCR_VALUE           DC.W    $1130
 MOVE_FM_CCR_VALUE           DC.W    $10B0
-MOVEA_VALUE                 DC.W    $0020
+MOVEA_VALUE                 DC.W    $0040
 MOVEM_VALUE                 DC.W    $4880
 SUB_VALUE                   DC.W    $9000
 SUBQ_VALUE                  DC.W    $5100
@@ -31,6 +31,8 @@ BCC_OR_BRA_VALUE            DC.W    $6000
 JSR_VALUE                   DC.W    $4E80
 NOP_VALUE                   DC.W    $4E71
 ADDS_VALUE                  DC.W    $D000
+
+
 
 
 

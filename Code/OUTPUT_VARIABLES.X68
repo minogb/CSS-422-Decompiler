@@ -46,6 +46,7 @@ MOVEA_TEXT DC.B 'MOVEA',0
 LIST_TEXT DC.B '<LIST>',0
 SR_TEXT DC.B 'SR',0
 CCR_TEXT DC.B 'CCR',0
+BCLR_TEXT DC.B 'BCLR',0
 *-----------------------------------------------------------------
 RO_TEXT DC.B 'RO',0
 LS_TEXT DC.B 'LS',0
@@ -75,6 +76,7 @@ BYTE_TEXT DC.B '.B',0
 LONG_TEXT DC.B '.L',0
 WORD_TEXT DC.B '.W',0
 NUM_OF_OP DC.B $18,0        ;there are 24 (dec) 0x18 number of OPs
+
 
 
 
