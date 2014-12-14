@@ -347,6 +347,30 @@ PRINT_ADDA:
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+PRINT_END_LINE:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA END_LINE,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+PRINT_HEADER:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA HEADER,A1
+    MOVE.B #14,D0
+    TRAP #15
+    JSR PRINT_END_LINE
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+    
+PRINT_SPACE_BETWEEN_ADDR_OP:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA SPACE_BETWEEN_ADDR_OP,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+
 
 
 

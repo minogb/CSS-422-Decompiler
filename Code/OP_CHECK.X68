@@ -6,12 +6,12 @@
 *-----------------------------------------------------------
 SET EQU $1
 BCLR_IMMEDIATE_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
                      
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 RO_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     CLR D7                                      ;clear our return value, default 0
     MOVE.W D2,D1                                ;copy data
     AND.W (RO_VALUE),D1                         ;bitmask with RO's value
@@ -19,7 +19,7 @@ RO_OP_CHECK:
     BNE DONE_RO_CHECK                           ;if we are not RO end this test
     JSR VERIFY_RO                               ;make sure we are a valid RO OP
 
-DONE_RO_CHECK     MOVEM.L (SP)+,D0-D6/A0-A6     ;restore any data
+DONE_RO_CHECK     MOVEM.L (SP)+,D0-D6/A0-A4/A6     ;restore any data
     RTS
 VERIFY_RO:
     MOVE.W D2,D1                                ;copy data
@@ -35,7 +35,7 @@ VERIFY_RO:
     ;call function to decode ls memory shift mode
     MOVE.B #1,D7
     JSR FPRINT_SHIFT_REGISTER
-DONE_VER_RO
+DONE_VER_RO MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
 GOOD_VER_RO
     MOVE.B #1,D7
@@ -45,14 +45,14 @@ GOOD_VER_RO
 
 *-----------------------------------------------
 LS_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     CLR D7
     MOVE.W D2,D1
     AND.W (LS_VALUE),D1
     CMP.W LS_VALUE,D1
     BNE DONE_LS_CHECK
     JSR VERIFY_LS
-DONE_LS_CHECK     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_LS_CHECK     MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 VERIFY_LS:
     MOVE.W D2,D1                                ;copy data
@@ -78,14 +78,14 @@ GOOD_VER_LS
     BRA DONE_VER_LS
 *-----------------------------------------------
 AS_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     CLR D7
     MOVE.W D2,D1
     AND.W (AS_VALUE),D1
     CMP.W AS_VALUE,D1
     BNE DONE_AS_CHECK
     JSR VERIFY_AS
-DONE_AS_CHECK     MOVEM.L (SP)+,D0-D6/A0-A6     ;restore any data
+DONE_AS_CHECK     MOVEM.L (SP)+,D0-D6/A0-A4/A6     ;restore any data
     RTS
 VERIFY_AS:
     MOVE.W D2,D1                                ;copy data
@@ -110,7 +110,7 @@ GOOD_VER_AS
     BRA DONE_VER_AS
     
 MULS_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (MULS_VALUE),D1
     CMP.W MULS_VALUE,D1
@@ -130,10 +130,10 @@ SKIP_MULS_ADD_REG_CHECK
     MOVE #1,D7
     MOVE.W D2,D1
     JSR PRINTING_MULS   
-DONE_MULS_CHECK    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_MULS_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 EOR_OR_CMP_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (EOR_OR_CMP_VALUE),D1
     CMP.W EOR_OR_CMP_VALUE,D1
@@ -142,7 +142,7 @@ EOR_OR_CMP_OP_CHECK:
     LSL #7,D1
     LSR #7,D1
     LSR #6,D1
-    CMP #3,D1
+    CMP #2,D1
     BGT EOR_CHECK
     MOVE.W D2,D1
     AND.W #0038,D1
@@ -181,10 +181,10 @@ SKIP_CMP_ADD_REG_CHECK
     MOVE.W #1,D7
     JSR PRINTING_CMP 
     BRA DONE_CMP_OR_EOR_CHECK
-DONE_CMP_OR_EOR_CHECK    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_CMP_OR_EOR_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 SUB_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (SUB_VALUE),D1
     CMP.W SUB_VALUE,D1
@@ -230,10 +230,10 @@ GOOD_D_TO_EA_SUB
     MOVE.W D1,D7
     JSR PRINTING_SUB_D_TO_EA
     BRA DONE_SUB_CHECK
-DONE_SUB_CHECK    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_SUB_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 DIVS_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (DIVS_VALUE),D1
     CMP.W DIVS_VALUE,D1
@@ -254,10 +254,10 @@ SKIP_DIVS_ADD_REG_CHECK
     MOVE #1,D7
     MOVE.W D2,D1
     JSR PRINTING_DIVS                      
-DONE_DIVS_CHECK    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_DIVS_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                  ;restore any data
     RTS
 OR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (OR_VALUE),D1
     CMP.W OR_VALUE,D1
@@ -303,10 +303,10 @@ GOOD_D_TO_EA_OR
     MOVE.W D1,D7
     JSR PRINTING_OR_D_TO_EA
     BRA DONE_OR_CHECK
-DONE_OR_CHECK    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+DONE_OR_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 BCC_OR_BRA_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (BCC_OR_BRA_VALUE),D1
     CMP.W BCC_OR_BRA_VALUE,D1
@@ -318,10 +318,10 @@ BCC_OR_BRA_OP_CHECK:
     JSR PRINTING_BCC  
     MOVE.B #1,D7
     BRA BCC_OR_BRA_DONE
-BCC_OR_BRA_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+BCC_OR_BRA_DONE    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 SUBQ_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (SUBQ_VALUE),D1
     CMP.W SUBQ_VALUE,D1
@@ -339,10 +339,10 @@ SUBQ_OP_CHECK:
 SUBQ_GOOD_CHECK
     MOVE.W #1,D7
     JSR PRINTING_SUBQ
-SUBQ_CHECK_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+SUBQ_CHECK_DONE    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 JSR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (JSR_VALUE),D1
     CMP.W JSR_VALUE,D1
@@ -369,18 +369,18 @@ GOOD_JSR_CHECK
     MOVE #1,D7
     JSR PRINTING_JSR
 JSR_CHECK_DONE
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 RTS_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     CMP.L RTS_VALUE,D2
     BNE RTS_DONE 
     MOVE #1,D7   
     JSR PRINT_RTS
-RTS_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+RTS_DONE    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVEM_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (MOVEM_VALUE),D1
     CMP.W MOVEM_VALUE,D1
@@ -432,10 +432,10 @@ GOOD_MOVEM_CHECK
     MOVE #1,D7
     BRA DONE_MOVEM_CHECK
 DONE_MOVEM_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 NEG_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (NEG_VALUE),D1
     CMP.W NEG_VALUE,D1
@@ -458,10 +458,10 @@ GOOD_NEG_CHECK
     MOVE #1,D7
     BRA DONE_NEG_CHECK
 DONE_NEG_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 LEA_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (LEA_VALUE),D1
     CMP.W LEA_VALUE,D1
@@ -488,30 +488,30 @@ GOOD_LEA_CHECK
     MOVE #1,D7
     BRA DONE_LEA_CHECK
 DONE_LEA_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVE_TO_SR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVE_TO_CCR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
                      
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVE_FM_CCR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                ;back up any data we might step on   
                      
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVE_FM_SR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
                      
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 CMPI_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (CMPI_VALUE),D1
     CMP.W CMPI_VALUE,D1
@@ -536,10 +536,10 @@ GOOD_CMPI
     MOVE #1,D7
     JSR PRINTING_CMPI
 DONE_CMPI_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 BCLR_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (BCLR_VALUE),D1
     CMP.W BCLR_VALUE,D1
@@ -560,10 +560,10 @@ GOOD_BCLR_CHECK
     MOVE.W #1,D7
     JSR PRINTING_BCLR
 BCLR_DONE_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 MOVEA_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (MOVEA_VALUE),D1
     CMP.W MOVEA_VALUE,D1
@@ -589,10 +589,10 @@ GOOD_MOVEA_CHECK
     JSR PRINTING_MOVEA
     BRA DONE_MOVEA_CHECK
 DONE_MOVEA_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
 ORI_OP_CHECK:                         
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     LSR #6,D1
     CMP #3,D1
@@ -612,10 +612,10 @@ GOOD_ORI_CHECK
     MOVE #1,D7
     JSR PRINTING_ORI
 DONE_ORI_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                  ;restore any data
     RTS
 MOVE_OP_CHECK: 
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
     LSR #8,D1
     LSR #4,D1
@@ -651,19 +651,22 @@ GOOD_MOVE_CHECK
     JSR PRINTING_MOVE
     BRA DONE_MOVE_CHECK
 DONE_MOVE_CHECK
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;restore any data
     RTS
 NOP_OP_CHECK   
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     CMP.W NOP_VALUE,D2
     BNE NOP_DONE   
     MOVE.B #1,D7
     JSR PRINT_NOP              
-NOP_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+NOP_DONE    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
-ADDS_OP_CHECK   
-    MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
+ADDS_OP_CHECK:  
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                 ;back up any data we might step on   
     MOVE.W D2,D1
+    AND.W (ADDS_VALUE),D1
+    CMP.W ADDS_VALUE,D1
+    BNE ADDS_CHECK_DONE
     AND.W #$08C0,D1
     LSR #6,D1
     CMP #7,D1
@@ -712,8 +715,13 @@ GOOD_ADD_DEST
     MOVE #1,D7
     BRA ADDS_CHECK_DONE
 ADDS_CHECK_DONE
-    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
+
+
+
+
+
 
 
 

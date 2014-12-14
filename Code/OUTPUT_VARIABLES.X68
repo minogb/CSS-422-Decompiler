@@ -76,8 +76,11 @@ REG_TEXT DC.B 'D',0
 BYTE_TEXT DC.B '.B',0
 LONG_TEXT DC.B '.L',0
 WORD_TEXT DC.B '.W',0
-NUM_OF_OP DC.B $18,0        ;there are 24 (dec) 0x18 number of OPs
-
+CR EQU $0D
+LF EQU $0A
+END_LINE DC.B CR,LF,0
+HEADER DC.B 'ADDRES LOCAL |   OP MODE   | DATA',0
+SPACE_BETWEEN_ADDR_OP DC.B '             ',0
 
 
 
