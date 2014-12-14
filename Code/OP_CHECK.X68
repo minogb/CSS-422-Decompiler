@@ -663,9 +663,58 @@ NOP_DONE    MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
 ADDS_OP_CHECK   
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
-                     
+    MOVE.W D2,D1
+    AND.W #$08C0,D1
+    LSR #6,D1
+    CMP #7,D1
+    BEQ ADDA_CHECK_ADDRES
+    CMP #3,D1
+    BEQ ADDA_CHECK_ADDRES
+    CMP #4,D1
+    BLT CHECK_ADD_ADDRES_SOURCE
+    MOVE.W D2,D1
+    ADD.W #$0007
+    CMP #1,D1
+    BGT ADDS_CHECK_DONE
+    MOVE.W D2,D1
+    ADD.W #0038,D1
+    LSR #3,D1
+    CMP #0,D1
+    BEQ ADDS_CHECK_DONE
+    CMP #1,D1
+    BEQ ADDS_CHECKS_DONE
+    BRA GOOD_ADD_DEST   
+CHECK_ADD_ADDRES_SOURCE
+    MOVE.W D2,D1
+    ADD.W #$0007
+    CMP #4,D1
+    BGT ADDS_CHECK_DONE
+    BRA GOOD_ADD_SOURCE
+CHECK_ADDA_ADDRES
+    MOVE.W D2,D1
+    ADD.W #$0007
+    CMP #4,D1
+    BGT ADDS_CHECK_DONE
+    BRA GOOD_ADDA
+GOOD_ADDA
+    MOVE.W D2,D1
+    JSR PRINTING_ADDA
+    MOVE #1,D7
+    BRA ADDS_CHECK_DONE
+GOOD_ADD_SOURCE
+    MOVE.W D2,D1
+    JSR PRINTING_ADD_SOURCE
+    MOVE #1,D7
+    BRA ADDS_CHECK_DONE
+GOOD_ADD_DEST
+    MOVE.W D2,D1
+    JSR PRINTING_ADD_DEST
+    MOVE #1,D7
+    BRA ADDS_CHECK_DONE
+ADDS_CHECK_DONE
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
+
 
 
 
