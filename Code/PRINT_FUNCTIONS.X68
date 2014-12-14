@@ -279,6 +279,7 @@ PRINT_INC_DER_ADD:
     MOVE.B #14,D0                
     TRAP #15
     
+    JSR PRINT_ADD_REG
     JSR PRINT_D1
     
     LEA RIGHT_PAR_TEXT,A1
@@ -301,7 +302,7 @@ PRINT_DEC_DER_ADD:
     LEA LEFT_PAR_TEXT,A1
     MOVE.B #14,D0                
     TRAP #15
-    
+    JSR PRINT_ADD_REG
     JSR PRINT_D1
     
     LEA RIGHT_PAR_TEXT,A1
@@ -370,6 +371,8 @@ PRINT_SPACE_BETWEEN_ADDR_OP:
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+
+
 
 
 

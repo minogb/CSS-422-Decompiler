@@ -7,21 +7,29 @@
 *-----------------------------------------------------------
 DECODE_AS_SOURCE:
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
-    AND.L #$003F,D2
+    AND.W #$003F,D2
     JSR DECODE_EA
     MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
 DECODE_AS_DESTINATION:
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
-    AND.L #$0FC0,D2
-    LSR.W #6,D2
+    MOVE.W D2,D1
+    AND.W #$01C0,D1
+    LSR.W #3,D1
+    MOVE.W D1,D3
+    MOVE.W D2,D1
+    AND.W #$0E00,D1
+    LSR.W #8,D1
+    LSR.W #1,D1
+    ADD.W D1,D3
+    MOVE.W D1,D2
     JSR DECODE_EA    
     MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
 DECODE_EA:
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     LEA EA_MODE_ARRAY,A3
-    MOVE.B #8, D4
+    MOVE.B #0, D4
     CLR D3
     CLR D7
 EA_DECODING_LOOP
@@ -140,28 +148,41 @@ EA_IMMEDIATE_MODE:
 DONE_IMMEDIATE_EA MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
 EA_WORD_MODE:
-    MOVE.B #1,D7
-    JSR DECODE_VALUE_IMMEDIATE
+    MOVE.W (A5)+,D1
+    JSR PRINT_D1
+     MOVE.B #1,D7
     BRA DONE_IMMEDIATE_EA
-EA_LONG_MODE:
-    MOVE.B #1,D7
-    JSR DECODE_VALUE_IMMEDIATE
+EA_LONG_MODE: 
+    MOVE.L (A5)+,D1
+    JSR PRINT_D1
+     MOVE.B #1,D7
     BRA DONE_IMMEDIATE_EA
 EA_IM_MODE:
     MOVE.B #1,D7
     JSR DECODE_VALUE_IMMEDIATE
     BRA DONE_IMMEDIATE_EA
-EA_16_PC_MODE:
-    MOVE.B #1,D7
+EA_16_PC_MODE: 
+ MOVE.B #1,D7
+    MOVE.W (A5)+,D1
+    JSR PRINT_D1
     BRA DONE_IMMEDIATE_EA
-EA_8_PC_MODE:
-    MOVE.B #1,D7
-    BRA DONE_IMMEDIATE_EA  
+EA_8_PC_MODE: 
+ MOVE.B #1,D7
+    MOVE.W (A5)+,D1
+    JSR PRINT_D1
+
+    BRA DONE_IMMEDIATE_EA
     
 DECODE_VALUE_IMMEDIATE:
     MOVEM.L D0-D6/A0-A4/A6,-(SP)
-    MOVE.L (A5)+,D1
-    JSR PRINT_D1
+    MOVE.W (A5)+,D1 
+    *ADD.W #32,D1
+    MOVE #16,D2
+    MOVE #15,D0
+    TRAP #15
+     MOVE.B #1,D7
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6
+    RTS
 DONE_VALUE_IMMEDIATE_EA 
     MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
@@ -187,12 +208,24 @@ EA_8_PC_VALUE DC.W          $3
 *8
 EA_MODE_ARRAY DC.L EA_DATA_REG_MODE, EA_ADD_REG_MODE, EA_DER_ADD_MODE
     DC.L EA_DER_ADD_INC_MODE, EA_DER_ADD_DEC_MODE,EA_16_ADD_MODE
-    DC.L EA_8_ADD_MODE, EA_IM_MODE
+    DC.L EA_8_ADD_MODE,EA_IM_MODE
     
 *5  
 EA_REG_TYPE_ARRAY DC.L EA_WORD_VALUE, EA_LONG_VALUE, EA_IM_DATA_VALUE
     DC.L  EA_16_PC_VALUE, EA_8_PC_VALUE
     
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

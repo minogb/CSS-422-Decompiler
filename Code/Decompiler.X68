@@ -26,7 +26,7 @@ MAIN
     
 *----------------------------------------------------------------------
 LOOP_INPUT:                         
-    MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on
     ;load up input here
     LEA START_INPUT,A5
     LEA END_INPUT,A6
@@ -37,13 +37,16 @@ LOOP_INPUTS
     ADD #1,D4
     CMP D5,D4
     BNE CONTINUE_LOOP
+   
     CLR D4
     JSR PRINT_END_LINE
     JSR PRINT_HEADER
 CONTINUE_LOOP
+    CLR.L D1
     MOVE.L A5,D1
+
     MOVE #16,D2
-    MOVE #3,D0
+    MOVE #15,D0
     TRAP #15
     JSR PRINT_SPACE_BETWEEN_ADDR_OP
     MOVE.W (A5)+,D2
@@ -54,7 +57,7 @@ CONTINUE_LOOP
     BRA LOOP_INPUTS
     ;some kind of input done check
 DONE_INPUT
-    MOVEM.L (SP)+,D0-D7/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                    ;restore any data
     RTS
     
 *----------------------------------------------------------------------
@@ -63,7 +66,7 @@ DONE_INPUT
 *if found as invalid automaticaly or prints the OP code
 *----------------------------------------------------------------------
 VALID_OP_CHECK:                         
-    MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on
+    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on
     LEA TESTS_ARRAY,A3
     MOVE.B #27,D4                               ;we have 25 inputs to check
     CLR.L D3                                    ;we are going to count up
@@ -85,7 +88,7 @@ NOTHING_FOUND
 ;in eiether case of running out of tests or finding a test we need to branch to done
 ;to restore control to input loop   
 DONE
-    MOVEM.L (SP)+,D0-D7/A0-A6                   ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                  ;restore any data
     RTS
 *------------------------------------------------------------------
 TESTS_ARRAY DC.L ADDS_OP_CHECK, RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_CHECK, EOR_OR_CMP_OP_CHECK, SUB_OP_CHECK
@@ -96,6 +99,8 @@ TESTS_ARRAY DC.L ADDS_OP_CHECK, RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_C
 EA_TEXT DC.B 'EA',0
 SAMPLE_INPUT DC.W $5692
     END    START        ; last line of source
+
+
 
 
 

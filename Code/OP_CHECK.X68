@@ -622,16 +622,17 @@ MOVE_OP_CHECK:
     CMP #0,D1
     BEQ DONE_MOVE_CHECK
     MOVE.W D2,D1
-    AND.W #$0FC0,D1
+    AND.W #$01FF,D1
     MOVE.W D1,D3
-    LSR #8,D1
-    LSR #1,D1
+    LSR #6,D1
     CMP #1,D1
     BEQ DONE_MOVE_CHECK
     CMP #7,D1
     BNE MOVE_SOURCE_CHECK
-    MOVE.W D1,D3
-    LSR #3,D1
+    MOVE.W D2,D1
+    AND.W #$0E00,D1
+    LSR #8,D1
+    LSR #1,D1
     CMP #1,D1
     BGT DONE_MOVE_CHECK
     BRA MOVE_SOURCE_CHECK
@@ -651,7 +652,7 @@ GOOD_MOVE_CHECK
     JSR PRINTING_MOVE
     BRA DONE_MOVE_CHECK
 DONE_MOVE_CHECK
-    MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;restore any data
+    MOVEM.L (SP)+,D0-D6/A0-A4/A6                  ;restore any data
     RTS
 NOP_OP_CHECK   
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
@@ -717,6 +718,9 @@ GOOD_ADD_DEST
 ADDS_CHECK_DONE
     MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
+
+
+
 
 
 
