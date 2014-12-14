@@ -614,7 +614,7 @@ GOOD_ORI_CHECK
 DONE_ORI_CHECK
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
-MOVE_OP_CHECK   
+MOVE_OP_CHECK: 
     MOVEM.L D0-D6/A0-A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
     LSR #8,D1
@@ -637,12 +637,17 @@ MOVE_OP_CHECK
     BRA MOVE_SOURCE_CHECK
 MOVE_SOURCE_CHECK
     MOVE.W D2,D1
-    AND.W #$0007,D1
+    AND.W #$0038,D1
+    CMP #7,D1
+    BNE GOOD_MOVE_CHECK
+    MOVE.W D2,D1
+    AND.W #$0007,D0
     CMP #4,D1
     BGT DONE_MOVE_CHECK
     BRA GOOD_MOVE_CHECK
 GOOD_MOVE_CHECK
     MOVE #1,D7
+    MOVE.W D2,D1
     JSR PRINTING_MOVE
     BRA DONE_MOVE_CHECK
 DONE_MOVE_CHECK
@@ -661,6 +666,10 @@ ADDS_OP_CHECK
                      
     MOVEM.L (SP)+,D0-D6/A0-A6                   ;restore any data
     RTS
+
+
+
+
 
 
 
