@@ -183,6 +183,7 @@ EA_REG_TYPE_ARRAY DC.L EA_WORD_VALUE, EA_LONG_VALUE, EA_IM_DATA_VALUE
     DC.L  EA_16_PC_VALUE, EA_8_PC_VALUE
     
 
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~

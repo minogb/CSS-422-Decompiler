@@ -8,7 +8,7 @@
 START: 
 ;hand over to our controller
     BRA MAIN
-    ORI.L #3,(A2)
+    BRA BAAWK
 *-----------------------INCLUDES---------------------------------------
     INCLUDE 'OP_VARIABLES.X68'
     INCLUDE 'OUTPUT_VARIABLES.X68'
@@ -17,8 +17,10 @@ START:
     INCLUDE 'VERIFY_EA.X68'
     INCLUDE 'PRINT_OP.X68'
     INCLUDE 'DECODE_EA.X68'
+    INCLUDE 'INPUT.X68'
 *----------------------------------------------------------------------
 MAIN
+    LEA.L START_INPUT,A6
     JSR LOOP_INPUT
     SIMHALT             ; halt simulator
     
@@ -26,8 +28,19 @@ MAIN
 LOOP_INPUT:                         
     MOVEM.L D0-D7/A0-A6,-(SP)                   ;back up any data we might step on
     ;load up input here
-    MOVE.W (SAMPLE_INPUT),D2
-    JSR VALID_OP_CHECK                          ;valid op check will print our input correctly
+
+    MOVE.L (A6)+,D1
+    MOVE #16,D2
+    MOVE #3,D0
+    TRAP #15
+    JSR PRINT_SPACE
+    MOVE.L (A6),D1
+    MOVE #16,D2
+    MOVE #3,D0
+    TRAP #15
+    *MOVE.L (A6)+,D2
+    *MOVE.W #$6000,D2
+    *JSR VALID_OP_CHECK                          ;valid op check will print our input correctly
     ;some kind of input done check
 DONE_INPUT
     MOVEM.L (SP)+,D0-D7/A0-A6                   ;restore any data
@@ -70,8 +83,10 @@ TESTS_ARRAY DC.L ADDS_OP_CHECK, RO_OP_CHECK, LS_OP_CHECK, AS_OP_CHECK, MULS_OP_C
     DC.L MOVE_FM_SR_OP_CHECK, CMPI_OP_CHECK, BCLR_OP_CHECK, MOVEA_OP_CHECK, MOVE_OP_CHECK, ORI_OP_CHECK
 *-------------------------TEMP USE---------------------------------
 EA_TEXT DC.B 'EA',0
-SAMPLE_INPUT DC.W $0092
+SAMPLE_INPUT DC.W $5692
     END    START        ; last line of source
+
+
 
 
 

@@ -340,6 +340,14 @@ PRINT_BCLR:
     TRAP #15
     MOVEM.L (SP)+,D0/A0-A1            ;restore any data
     RTS
+PRINT_ADDA:
+    MOVEM.L D0/A0-A1,-(SP)            ;back up any data we might step on
+    LEA ADDA_TEXT,A1
+    MOVE.B #14,D0
+    TRAP #15
+    MOVEM.L (SP)+,D0/A0-A1            ;restore any data
+    RTS
+
 
 
 

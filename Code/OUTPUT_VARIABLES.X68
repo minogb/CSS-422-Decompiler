@@ -10,6 +10,7 @@ SUB_TEXT DC.B 'SUB',0
 SUBQ_TEXT DC.B 'SUBQ',0
 *-----------------------------------------------------------------
 ADD_TEXT DC.B 'ADD',0
+ADDA_TEXT DC.B 'ADDA',0
 *-----------------------------------------------------------------
 ORI_TEXT DC.B 'ORI',0
 OR_TEXT DC.B 'OR',0
@@ -76,6 +77,7 @@ BYTE_TEXT DC.B '.B',0
 LONG_TEXT DC.B '.L',0
 WORD_TEXT DC.B '.W',0
 NUM_OF_OP DC.B $18,0        ;there are 24 (dec) 0x18 number of OPs
+
 
 
 
