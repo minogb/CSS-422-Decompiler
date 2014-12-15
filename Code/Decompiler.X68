@@ -20,38 +20,48 @@ START:
     INCLUDE 'INPUT.X68'
 *----------------------------------------------------------------------
 MAIN
-    LEA.L START_INPUT,A6
+*start deccoding input
     JSR LOOP_INPUT
     SIMHALT             ; halt simulator
     
 *----------------------------------------------------------------------
+*this loop will go from the starting address stored in a5
+*to the ending address stored in a6
 LOOP_INPUT:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on
-    ;load up input here
+*load up the addresses
     LEA START_INPUT,A5
     LEA END_INPUT,A6
+*before we loop start with printing a fancy header
     JSR PRINT_HEADER
     CLR D4
+*we will have 29 outputs per page
     MOVE #30,D5
 LOOP_INPUTS
+*increment and test counter to see if we need a new page
     ADD #1,D4
     CMP D5,D4
     BNE CONTINUE_LOOP
-   
+*print a new page and reset the counter  
     CLR D4
     JSR PRINT_END_LINE
     JSR PRINT_HEADER
 CONTINUE_LOOP
+*take in address to print
     CLR.L D1
     MOVE.L A5,D1
-
+*print in base 16
     MOVE #16,D2
     MOVE #15,D0
     TRAP #15
+*print a formating space
     JSR PRINT_SPACE_BETWEEN_ADDR_OP
+*load up OP code
     MOVE.W (A5)+,D2
+*decompiler OP code
     JSR VALID_OP_CHECK                          ;valid op check will print our input correctly
     JSR PRINT_END_LINE
+*test to see if we hit/passed the ending address
     CMP.W A6,A5
     BGE DONE_INPUT
     BRA LOOP_INPUTS

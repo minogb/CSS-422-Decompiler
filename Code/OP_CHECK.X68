@@ -4,7 +4,8 @@
 * Date       : 12/12/14
 * Description: Functions that check what OP type we are
 *-----------------------------------------------------------
-SET EQU $1
+*standard formual is check to see if the known op code matches our input
+*then verify that input by looking at things like size, modes, EA modes
 BCLR_IMMEDIATE_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
                      
@@ -113,17 +114,23 @@ MULS_OP_CHECK:
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
     AND.W (MULS_VALUE),D1
+*check to see if we are a muls if we don't match here
+*we are for sure not muls
     CMP.W MULS_VALUE,D1
     BNE DONE_MULS_CHECK
     MOVE.W D2,D1
+*start checking EA modes to see if MULS has them
     AND.W #$0038,D1      
     LSR #3,D1
+*mode 1 is not supported
     CMP #1,D1
     BEQ DONE_MULS_CHECK
+*mode 7 requires an additional look
     CMP #7,D1
     BNE SKIP_MULS_ADD_REG_CHECK
     MOVE.W D2,D1
     AND.W #$0007,D1
+*any reg abouve 4 in mode 7 is not supported
     CMP #4,D2
     BGT DONE_MULS_CHECK
 SKIP_MULS_ADD_REG_CHECK
@@ -135,22 +142,28 @@ DONE_MULS_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any d
 EOR_OR_CMP_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
+*tset to see if we are an EOR or an CMP as they share the same general
+*value
     AND.W (EOR_OR_CMP_VALUE),D1
     CMP.W EOR_OR_CMP_VALUE,D1
-    BNE DONE_CMP_OR_EOR_CHECK    
+    BNE DONE_CMP_OR_EOR_CHECK
+*we seem to have a match now verify modes    
     MOVE.W D2,D1
     LSL #7,D1
     LSR #7,D1
     LSR #6,D1
     CMP #2,D1
     BGT EOR_CHECK
+*here if we are more than 2 we are an EOR not an CMP
     MOVE.W D2,D1
     AND.W #0038,D1
     LSR #3,D1
     CMP #7,D1
+*EA mode 7 requires an additional check
     BNE SKIP_CMP_ADD_REG_CHECK
     MOVE.W D2,D1
     AND.W #$0007,D1
+*anything about 4 is not supported
     CMP #4,D2
     BGT DONE_CMP_OR_EOR_CHECK
 
@@ -160,24 +173,31 @@ EOR_CHECK
     AND.W #$01C0,D1
     LSR #6,D1
     CMP #7,D1
+*if we are mode 7 in dest is not suported
     BEQ DONE_CMP_OR_EOR_CHECK
     MOVE.W D2,D1
     AND.W #$0038,D1
+*check source mode
     LSR #3,D1
     CMP #1,D1
+*we do not support ea mode 1
     BEQ DONE_CMP_OR_EOR_CHECK
     CMP #7,D1
+*ea mode 7 requires an additional check
     BNE SKIP_EOR_ADD_REG_CHECK
     MOVE.W D2,D1
     AND.W #$0007,D1
+*antying above reg 4 in mode 7 is not supported
     CMP #4,D2
     BGT DONE_CMP_OR_EOR_CHECK
     BRA SKIP_EOR_ADD_REG_CHECK
 SKIP_EOR_ADD_REG_CHECK
+*print out EOR and return as true
     MOVE.W #1,D7
     JSR PRINTING_EOR 
     BRA DONE_CMP_OR_EOR_CHECK
 SKIP_CMP_ADD_REG_CHECK 
+*print out CMP and return as true
     MOVE.W #1,D7
     JSR PRINTING_CMP 
     BRA DONE_CMP_OR_EOR_CHECK
@@ -186,6 +206,7 @@ DONE_CMP_OR_EOR_CHECK    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore
 SUB_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
+*test to see if we match sub
     AND.W (SUB_VALUE),D1
     CMP.W SUB_VALUE,D1
     BNE DONE_SUB_CHECK
@@ -193,14 +214,18 @@ SUB_OP_CHECK:
     LSl #7,D1
     LSR #7,D1
     LSR #6,D1
+*mode 7 is not supported
     CMP #7,D1
     BEQ DONE_SUB_CHECK
+*check what direction we are for further tests
     CMP #3,D1
+*we are a SUB Dn,EA
     BGT SUB_D_TO_EA_EA_CHECK
     MOVE.W D2,D1
     AND.W #$0038,D1
     LSR #3,D1
     CMP #7,D1
+*we are a SUB EA,Dn
     BNE GOOD_EA_TO_D_SUB
     MOVE.W D2,D1
     AND.W #$0007,D1
@@ -565,19 +590,24 @@ BCLR_DONE_CHECK
 MOVEA_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                  ;back up any data we might step on   
     MOVE.W D2,D1
+*check to see if we are a movea
     AND.W (MOVEA_VALUE),D1
     CMP.W MOVEA_VALUE,D1
     BNE DONE_MOVEA_CHECK
     MOVE.W D2,D1
+*verify correct size
     LSR #8,D1
     LSR #4,D1
+*sizes 0 and 1 are not supported
     CMP #0,D1
     BEQ DONE_MOVEA_CHECK
-    CMP #3,D1
+    CMP #1,D1
     BEQ DONE_MOVEA_CHECK
+*check for supported EA modes
     MOVE.W D2,D1
     AND.W #$0038,D1
     LSR #3,D1
+*anything about reg 4 as address mode 7 is not supported
     CMP #7,D1
     BNE GOOD_MOVEA_CHECK
     MOVE.W D2,D1
@@ -594,18 +624,22 @@ DONE_MOVEA_CHECK
 ORI_OP_CHECK:                         
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                   ;back up any data we might step on   
     MOVE.W D2,D1
-    LSR #6,D1
+    LSR #5,D1
     CMP #3,D1
     BEQ DONE_ORI_CHECK
     MOVE.W D2,D1
     AND.W #$0038,D1
+*check valid aaddressing modes
+    LSR #3,D1
     CMP #1,D2
     BEQ DONE_ORI_CHECK
     CMP #7,D2
+*mode 7 requires mode checking
     BNE GOOD_ORI_CHECK
     MOVE.W D2,D1
     AND.W #$0007,D1
     CMP #1,D1
+*anything abouve 1 is not supported
     BGT DONE_ORI_CHECK
     BRA GOOD_ORI_CHECK
 GOOD_ORI_CHECK
@@ -665,9 +699,11 @@ NOP_DONE    MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
 ADDS_OP_CHECK:  
     MOVEM.L D0-D6/A0-A4/A6,-(SP)                 ;back up any data we might step on   
     MOVE.W D2,D1
+*check to see if we are add or adda
     AND.W (ADDS_VALUE),D1
     CMP.W ADDS_VALUE,D1
     BNE ADDS_CHECK_DONE
+*by using known size check to see if we are are adda
     AND.W #$08C0,D1
     LSR #6,D1
     CMP #7,D1
@@ -675,22 +711,31 @@ ADDS_OP_CHECK:
     CMP #3,D1
     BEQ CHECK_ADDA_ADDRES
     CMP #4,D1
+*at this point we have decided we are not adda
+*so we can ssee what direction we are by a simple 
+*less than. 0-2 EA +Dn->Dn, 4-6 Dn+EA->EA
     BLT CHECK_ADD_ADDRES_SOURCE
     MOVE.W D2,D1
-    ADD.W #$0007,D1
+    ADD.W #$0038,D1
+    LSR #3,D1
+    CMP #1,D1
+    BEQ ADDS_CHECK_DONE
+    CMP #2,D1
+    BEQ ADDS_CHECK_DONE
+*mode 7 requires an additional check
+    CMP #7,D1
+    BNE GOOD_ADD_DEST 
+    MOVE.W D2,D1
     CMP #1,D1
     BGT ADDS_CHECK_DONE
-    MOVE.W D2,D1
-    ADD.W #0038,D1
-    LSR #3,D1
-    CMP #0,D1
-    BEQ ADDS_CHECK_DONE
-    CMP #1,D1
-    BEQ ADDS_CHECK_DONE
-    BRA GOOD_ADD_DEST   
+    BRA GOOD_ADD_DEST  
 CHECK_ADD_ADDRES_SOURCE
     MOVE.W D2,D1
-    ADD.W #$0007,D1
+    AND.W #$0038,D1
+    CMP #7,D1
+    BNE GOOD_ADD_SOURCE
+    MOVE.W D2,D1
+    AND.W #$0007,D1
     CMP #4,D1
     BGT ADDS_CHECK_DONE
     BRA GOOD_ADD_SOURCE
@@ -718,56 +763,6 @@ GOOD_ADD_DEST
 ADDS_CHECK_DONE
     MOVEM.L (SP)+,D0-D6/A0-A4/A6                   ;restore any data
     RTS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 *~Font name~Courier New~

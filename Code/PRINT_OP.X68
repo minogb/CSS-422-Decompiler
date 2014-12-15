@@ -791,29 +791,6 @@ PRINTING_ADDA
     MOVEM.L (SP)+,D0-D6/A0-A4/A6
     RTS
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~

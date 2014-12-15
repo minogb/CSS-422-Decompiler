@@ -20,12 +20,13 @@ START_INPUT
     JSR (A2)                                    ;will set D7 if a OP code was decoded
     CMP #0,D7                                    ;testing if we decoded something
     BNE DONE                                    ;yeap, move on to next input
-    BRA TESTING_LOOP                            ;otherwise keep looping
+    BRA START_INPUT                           ;otherwise keep looping
     
 
     JSR DATA_PRINT                              ;we tested every OP, now print as data
 
 END_INPUT
+
 
 
 
